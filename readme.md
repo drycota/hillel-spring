@@ -1,8 +1,8 @@
 # Hillel Spring course
 
-Spring project based on Java andSpring
+Spring project based on latest Java and Spring Boot
 
-## Gradle
-init project
+## Gradle 
+Init project
 
     gradle init
