@@ -34,7 +34,7 @@ public class PetRepository {
     }
 
     public void updatePet(Pet pet) {
-        findIndexById(pet.getId()).ifPresentOrElse(idx -> pets.set(idx, pet), () -> {throw new NoSuchPetExeption();}) ;
+        findIndexById(pet.getId()).ifPresentOrElse(idx -> pets.set(idx, pet), () -> {throw new NoSuchPetException();}) ;
     }
 
     private Optional<Integer> findIndexById(Integer id) {
@@ -47,6 +47,6 @@ public class PetRepository {
     }
 
     public void deletePet(Integer id) {
-        findIndexById(id).ifPresentOrElse(idx -> pets.remove(idx.intValue()), () -> {throw new NoSuchPetExeption();});
+        findIndexById(id).ifPresentOrElse(idx -> pets.remove(idx.intValue()), () -> {throw new NoSuchPetException();});
     }
 }

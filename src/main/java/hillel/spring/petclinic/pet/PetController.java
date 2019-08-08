@@ -15,7 +15,7 @@ public class PetController {
     @GetMapping("/pets/{id}")
     public Pet findById(@PathVariable Integer id) {
         val mayBePet = petService.findById(id);
-        return mayBePet.orElseThrow(PetNotFoundExeption::new);
+        return mayBePet.orElseThrow(PetNotFoundException::new);
     }
 
     @GetMapping("/pets")
@@ -31,12 +31,12 @@ public class PetController {
     @PutMapping("/pets/{id}")
     public ResponseEntity<?> updatePet(@RequestBody Pet pet, @PathVariable Integer id){
         if(!pet.getId().equals(id)){
-            throw new IdMissmatchExeption();
+            throw new IdMissmatchException();
         }
         try {
             petService.updatePet(pet);
             return ResponseEntity.ok().build();
-        } catch (NoSuchPetExeption e){
+        } catch (NoSuchPetException e){
             return ResponseEntity.badRequest().build();
         }
     }

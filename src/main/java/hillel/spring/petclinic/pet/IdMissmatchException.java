@@ -5,5 +5,5 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.client.HttpClientErrorException;
 
 @ResponseStatus(HttpStatus.BAD_REQUEST)
-public class IdMissmatchExeption extends RuntimeException {
+public class IdMissmatchException extends RuntimeException {
 }

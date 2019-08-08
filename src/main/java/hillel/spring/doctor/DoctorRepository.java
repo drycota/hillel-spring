@@ -2,6 +2,7 @@ package hillel.spring.doctor;
 
 import org.springframework.stereotype.Repository;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -9,7 +10,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Repository
 public class DoctorRepository {
     private AtomicInteger id = new AtomicInteger();
-    private final List<Doctor> doctors = new ArrayList<>();
+    private final List<Doctor> doctors = Collections.synchronizedList(new ArrayList<>());
     {
         doctors.add(new Doctor(id.incrementAndGet(), "Anton", "surgeon"));
         doctors.add(new Doctor(id.incrementAndGet(), "Boris", "therapist"));
