@@ -14,11 +14,6 @@ public class PetRepository {
 //    );
     private final List<Pet> pets = new ArrayList<>();
 
-    {
-        pets.add(new Pet(1, "Tom", "Cat", 2, new Owner("Vasya")));
-        pets.add(new Pet(2, "Jerry", "Mouse", 1, new Owner("Petya")));
-    }
-
     public List<Pet> findAll() {
         return pets;
     }
@@ -48,5 +43,9 @@ public class PetRepository {
 
     public void deletePet(Integer id) {
         findIndexById(id).ifPresentOrElse(idx -> pets.remove(idx.intValue()), () -> {throw new NoSuchPetException();});
+    }
+
+    public void deleteAll() {
+        pets.clear();
     }
 }

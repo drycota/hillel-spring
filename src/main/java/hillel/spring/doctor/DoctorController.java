@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.val;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
 import java.util.Optional;
@@ -17,6 +18,10 @@ import static org.springframework.http.HttpStatus.NO_CONTENT;
 public class DoctorController {
 
     private final DoctorService doctorService;
+    private final UriComponentsBuilder uriBuilder = UriComponentsBuilder.newInstance()
+                                                                        .scheme("HTTP")
+                                                                        .host("localhost")
+                                                                        .path("/doctors/{id}");
 
     //localhost/doctors
     //localhost/doctors?specialization=surgeon
@@ -50,7 +55,7 @@ public class DoctorController {
     @PostMapping("/doctors")
     public ResponseEntity<?> createDoctor(@RequestBody Doctor doctor) {
             doctorService.createDoctor(doctor);
-            return ResponseEntity.ok().build();
+            return ResponseEntity.created(uriBuilder.build(doctor.getId())).build();
     }
 
     @PutMapping("/doctors/{id}")

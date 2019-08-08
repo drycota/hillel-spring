@@ -2,15 +2,24 @@ package hillel.spring.petclinic.pet;
 
 import lombok.AllArgsConstructor;
 import lombok.val;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 @RestController
 @AllArgsConstructor
 public class PetController {
     private final PetService petService;
+    private final UriComponentsBuilder uriBuilder = UriComponentsBuilder.newInstance()
+                                                                        .scheme("http")
+                                                                        .host("localhost")
+                                                                        .path("/pets/{id}");
 
     @GetMapping("/pets/{id}")
     public Pet findById(@PathVariable Integer id) {
@@ -19,13 +28,28 @@ public class PetController {
     }
 
     @GetMapping("/pets")
-    public List<Pet> findAll() {
-        return petService.findAll();
+    public List<Pet> findAll(@RequestParam Optional<String> name, @RequestParam Optional<Integer> age) {
+        Optional<Predicate<Pet>> mayBeNamePredicate = name.map(this::filterByName);
+        Optional<Predicate<Pet>> mayByAgePredicate = age.map(this::filterByAge);
+        Predicate<Pet> predicate = Stream.of(mayBeNamePredicate, mayByAgePredicate)
+                .flatMap(Optional::stream)
+                .reduce(Predicate::and)
+                .orElse(pet -> true);
+        return petService.findAll(predicate);
+    }
+
+    private Predicate<Pet> filterByName(String name){
+        return pet -> pet.getName().equals(name);
+    }
+
+    private Predicate<Pet> filterByAge(Integer age){
+        return pet -> pet.getAge().equals(age);
     }
 
     @PostMapping("/pets")
-    public void createPet(@RequestBody Pet pet) {
+    public ResponseEntity<?> createPet(@RequestBody Pet pet) {
         petService.createPet(pet);
+        return ResponseEntity.created(uriBuilder.build(pet.getId())).build();
     }
 
     @PutMapping("/pets/{id}")
@@ -33,15 +57,24 @@ public class PetController {
         if(!pet.getId().equals(id)){
             throw new IdMissmatchException();
         }
-        try {
-            petService.updatePet(pet);
-            return ResponseEntity.ok().build();
-        } catch (NoSuchPetException e){
-            return ResponseEntity.badRequest().build();
-        }
+//        try {
+//            petService.updatePet(pet);
+//            return ResponseEntity.ok().build();
+//        } catch (NoSuchPetException e){
+//            return ResponseEntity.badRequest().build();
+//        }
+        petService.updatePet(pet);
+        return ResponseEntity.ok().build();
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public void NoSuchPet(NoSuchPetException  e){
+
     }
 
     @DeleteMapping("/pets/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deletePet(@PathVariable Integer id){
         petService.deletePet(id);
     }
