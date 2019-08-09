@@ -24,8 +24,8 @@ public class PetService {
                 .collect(Collectors.toList());
     }
 
-    public void createPet(Pet pet) {
-        petRepository.createPet(pet);
+    public Pet createPet(Pet pet) {
+        return petRepository.createPet(pet);
     }
 
     public void updatePet(Pet pet) {

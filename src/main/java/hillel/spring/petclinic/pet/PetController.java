@@ -1,7 +1,10 @@
 package hillel.spring.petclinic.pet;
 
+import hillel.spring.petclinic.pet.dto.PetDtoConverter;
+import hillel.spring.petclinic.pet.dto.PetInputDto;
 import lombok.AllArgsConstructor;
 import lombok.val;
+import org.mapstruct.factory.Mappers;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,10 +19,12 @@ import java.util.stream.Stream;
 @AllArgsConstructor
 public class PetController {
     private final PetService petService;
+    private final PetDtoConverter dtoConverter = Mappers.getMapper(PetDtoConverter.class);
+
     private final UriComponentsBuilder uriBuilder = UriComponentsBuilder.newInstance()
-                                                                        .scheme("http")
-                                                                        .host("localhost")
-                                                                        .path("/pets/{id}");
+            .scheme("http")
+            .host("localhost")
+            .path("/pets/{id}");
 
     @GetMapping("/pets/{id}")
     public Pet findById(@PathVariable Integer id) {
@@ -47,36 +52,44 @@ public class PetController {
     }
 
     @PostMapping("/pets")
-    public ResponseEntity<?> createPet(@RequestBody Pet pet) {
-        petService.createPet(pet);
-        return ResponseEntity.created(uriBuilder.build(pet.getId())).build();
+//    public ResponseEntity<?> createPet(@RequestBody Pet pet) {
+    public ResponseEntity<?> createPet(@RequestBody PetInputDto dto) {
+        val created = petService.createPet(dtoConverter.toModel(dto));
+        return ResponseEntity.created(uriBuilder.build(created.getId())).build();
     }
 
-    @PutMapping("/pets/{id}")
-    public ResponseEntity<?> updatePet(@RequestBody Pet pet, @PathVariable Integer id){
-        if(!pet.getId().equals(id)){
-            throw new IdMissmatchException();
-        }
-//        try {
-//            petService.updatePet(pet);
-//            return ResponseEntity.ok().build();
-//        } catch (NoSuchPetException e){
-//            return ResponseEntity.badRequest().build();
+//    @PutMapping("/pets/{id}")
+//    public ResponseEntity<?> updatePet(@RequestBody Pet pet, @PathVariable Integer id){
+//        if(!pet.getId().equals(id)){
+//            throw new IdMissmatchException();
 //        }
+////        try {
+////            petService.updatePet(pet);
+////            return ResponseEntity.ok().build();
+////        } catch (NoSuchPetException e){
+////            return ResponseEntity.badRequest().build();
+////        }
+//        petService.updatePet(pet);
+//        return ResponseEntity.ok().build();
+//    }
+    @PutMapping("/pets/{id}")
+    public ResponseEntity<?> updatePet(@RequestBody PetInputDto dto,
+                                       @PathVariable Integer id) {
+        val pet = dtoConverter.toModel(dto, id);
         petService.updatePet(pet);
         return ResponseEntity.ok().build();
-    }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public void NoSuchPet(NoSuchPetException  e){
-
     }
 
     @DeleteMapping("/pets/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deletePet(@PathVariable Integer id){
         petService.deletePet(id);
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public void NoSuchPet(NoSuchPetException  e){
+
     }
 }
 
