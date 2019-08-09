@@ -22,8 +22,8 @@ public class DoctorService {
         return doctorRepository.findById(id);
     }
 
-    public void createDoctor(Doctor doctor) {
-        doctorRepository.createDoctor(doctor);
+    public Doctor createDoctor(Doctor doctor) {
+        return doctorRepository.createDoctor(doctor);
     }
 
     public void updateDoctor(Doctor doctor) {
@@ -34,9 +34,9 @@ public class DoctorService {
         return doctorRepository.findById(id);
     }
 
-    public Optional<Doctor> findIndexById(Integer id) {
-        return doctorRepository.findById(id);
-    }
+//    public Optional<Doctor> findIndexById(Integer id) {
+//        return doctorRepository.findById(id);
+//    }
 
     public void deleteDoctor(Integer id) {
         doctorRepository.deleteDoctor(id);

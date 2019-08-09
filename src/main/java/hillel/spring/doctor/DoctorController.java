@@ -1,7 +1,11 @@
 package hillel.spring.doctor;
 
+import hillel.spring.doctor.dto.DoctorDtoConverter;
+import hillel.spring.doctor.dto.DoctorInputDto;
 import lombok.AllArgsConstructor;
 import lombok.val;
+import org.mapstruct.factory.Mappers;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -18,8 +22,9 @@ import static org.springframework.http.HttpStatus.NO_CONTENT;
 public class DoctorController {
 
     private final DoctorService doctorService;
+    private final DoctorDtoConverter dtoConverter = Mappers.getMapper(DoctorDtoConverter.class);
     private final UriComponentsBuilder uriBuilder = UriComponentsBuilder.newInstance()
-                                                                        .scheme("HTTP")
+                                                                        .scheme("http")
                                                                         .host("localhost")
                                                                         .path("/doctors/{id}");
 
@@ -53,19 +58,18 @@ public class DoctorController {
     }
 
     @PostMapping("/doctors")
-    public ResponseEntity<?> createDoctor(@RequestBody Doctor doctor) {
-            doctorService.createDoctor(doctor);
-            return ResponseEntity.created(uriBuilder.build(doctor.getId())).build();
+    public ResponseEntity<?> createDoctor(@RequestBody DoctorInputDto dto) {
+        val created = doctorService.createDoctor(dtoConverter.toModel(dto));
+        return ResponseEntity.created(uriBuilder.build(created.getId())).build();
     }
 
     @PutMapping("/doctors/{id}")
-    @ResponseStatus(NO_CONTENT)
-    public void  updateDoctor(@RequestBody Doctor doctor, @PathVariable Integer id){
-        doctorService.findIndexById(id).orElseThrow(DoctorNotFoundException::new);
-        if(!id.equals(doctor.getId())){
-            throw new IdNotEqualsException();
-        }
+//    @ResponseStatus(NO_CONTENT)
+    public ResponseEntity<?> updateDoctor(@RequestBody DoctorInputDto dto,
+                                          @PathVariable Integer id){
+        val doctor = dtoConverter.toModel(dto, id);
         doctorService.updateDoctor(doctor);
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/doctors/{id}")
@@ -74,6 +78,10 @@ public class DoctorController {
         doctorService.deleteDoctor(id);
     }
 
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public void NoSuchDoctor(NoSuchDoctorException e){
 
+    }
 }
 
