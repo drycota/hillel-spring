@@ -1,4 +1,4 @@
-package hillel.spring.knight;
+package old.hillel.spring.knight;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

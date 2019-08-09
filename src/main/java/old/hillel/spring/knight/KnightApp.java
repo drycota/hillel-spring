@@ -1,4 +1,4 @@
-package hillel.spring.knight;
+package old.hillel.spring.knight;
 
 import lombok.val;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;

@@ -1,19 +1,14 @@
-package hillel.spring;
+package old.hillel.spring;
 
-import java.util.Collections;
-import java.util.IntSummaryStatistics;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import org.junit.Test;
+
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
-import lombok.val;
-import org.junit.Test;
-
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 
 public class AppleProcessorTest {
     List<Apple> apples = List.of(
@@ -141,15 +136,15 @@ public class AppleProcessorTest {
         assertThat(redApples).hasSize(1);
     }
 
-    @Test
-    public void mapColors() throws Exception {
-        val colors = apples.stream()
-//                           .map(apple -> apple.getColor())
-                           .map(Apple::getColor)
-                           .collect(Collectors.toSet());
-
-        assertThat(colors).contains("Red", "Green", "Yellow");
-    }
+//    @Test
+//    public void mapColors() throws Exception {
+//        val colors = apples.stream()
+////                           .map(apple -> apple.getColor())
+//                           .map(Apple::getColor)
+//                           .collect(Collectors.toSet());
+//
+//        assertThat(colors).contains("Red", "Green", "Yellow");
+//    }
 
     @Test
     public void print() throws Exception {
@@ -167,16 +162,16 @@ public class AppleProcessorTest {
 
     }
 
-    @Test
-    public void combine() throws Exception {
-        val colorsMoreThan3Letters = apples.stream()
-                                           .map(Apple::getColor)
-                                           .filter(color -> color.length() > 3)
-                                           .peek(System.out::println)
-                                           .collect(Collectors.toList());
-
-        assertThat(colorsMoreThan3Letters).hasSize(3);
-    }
+//    @Test
+//    public void combine() throws Exception {
+//        val colorsMoreThan3Letters = apples.stream()
+//                                           .map(Apple::getColor)
+//                                           .filter(color -> color.length() > 3)
+//                                           .peek(System.out::println)
+//                                           .collect(Collectors.toList());
+//
+//        assertThat(colorsMoreThan3Letters).hasSize(3);
+//    }
 
     @Test
     public void groupByColor() throws Exception {

@@ -1,4 +1,4 @@
-package hillel.spring.problem;
+package old.hillel.spring.problem;
 
 public interface Problem {
     String simpleSolution();

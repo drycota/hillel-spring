@@ -1,4 +1,4 @@
-package hillel.spring.problem;
+package old.hillel.spring.problem;
 
 public class ToBeOrNotToBeProblem implements Problem {
     @CorrectAnswer

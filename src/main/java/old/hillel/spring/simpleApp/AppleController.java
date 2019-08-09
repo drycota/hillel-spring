@@ -1,4 +1,4 @@
-package hillel.spring.simpleApp;
+package old.hillel.spring.simpleApp;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;

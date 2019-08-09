@@ -1,4 +1,4 @@
-package hillel.spring.knight;
+package old.hillel.spring.knight;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

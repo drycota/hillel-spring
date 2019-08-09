@@ -1,6 +1,6 @@
-package hillel.spring.simpleApp;
+package old.hillel.spring.simpleApp;
 
-import hillel.spring.Apple;
+import old.hillel.spring.Apple;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
