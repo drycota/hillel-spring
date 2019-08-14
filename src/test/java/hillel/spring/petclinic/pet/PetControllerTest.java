@@ -44,10 +44,10 @@ public class PetControllerTest {
                 .content(fromResource("petclinic/pet/create-pet.json"))
         )
                 .andExpect(status().isCreated())
-                .andExpect(header().string("location", containsString("http://localhost/pets/")))
+                .andExpect(header().string("location", containsString("http://my-pet.com/pets/")))
                 .andReturn().getResponse();
 
-        Integer id = Integer.parseInt(response.getHeader("location").replace("http://localhost/pets/", ""));
+        Integer id = Integer.parseInt(response.getHeader("location").replace("http://my-pet.com/pets/", ""));
 
         assertThat(repository.findById(id)).isPresent();
     }

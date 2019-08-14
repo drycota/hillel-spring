@@ -2,9 +2,8 @@ package hillel.spring.petclinic.pet;
 
 import hillel.spring.petclinic.pet.dto.PetDtoConverter;
 import hillel.spring.petclinic.pet.dto.PetInputDto;
-import lombok.AllArgsConstructor;
 import lombok.val;
-import org.mapstruct.factory.Mappers;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,16 +14,26 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
+
 @RestController
-@AllArgsConstructor
+//@AllArgsConstructor
 public class PetController {
     private final PetService petService;
-    private final PetDtoConverter dtoConverter = Mappers.getMapper(PetDtoConverter.class);
+    private final PetDtoConverter dtoConverter;// = Mappers.getMapper(PetDtoConverter.class);
 
-    private final UriComponentsBuilder uriBuilder = UriComponentsBuilder.newInstance()
-            .scheme("http")
-            .host("localhost")
-            .path("/pets/{id}");
+    private final UriComponentsBuilder uriBuilder;
+
+    public PetController(PetService petService,
+                         PetDtoConverter dtoConverter,
+                         //если ${pet-clinic.host-name} отсутствует, то по умолчанию будет localhost
+                         @Value("${pet-clinic.host-name:localhost}") String hostName) {
+        this.petService = petService;
+        this.dtoConverter = dtoConverter;
+        uriBuilder = UriComponentsBuilder.newInstance()
+                                            .scheme("http")
+                                            .host(hostName)
+                                            .path("/pets/{id}");
+    }
 
     @GetMapping("/pets/{id}")
     public Pet findById(@PathVariable Integer id) {

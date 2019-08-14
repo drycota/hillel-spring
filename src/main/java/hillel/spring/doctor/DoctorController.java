@@ -2,9 +2,7 @@ package hillel.spring.doctor;
 
 import hillel.spring.doctor.dto.DoctorDtoConverter;
 import hillel.spring.doctor.dto.DoctorInputDto;
-import lombok.AllArgsConstructor;
 import lombok.val;
-import org.mapstruct.factory.Mappers;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,15 +16,21 @@ import java.util.stream.Stream;
 import static org.springframework.http.HttpStatus.NO_CONTENT;
 
 @RestController
-@AllArgsConstructor
+//@AllArgsConstructor
 public class DoctorController {
 
     private final DoctorService doctorService;
-    private final DoctorDtoConverter dtoConverter = Mappers.getMapper(DoctorDtoConverter.class);
+    private final DoctorDtoConverter dtoConverter;
+
     private final UriComponentsBuilder uriBuilder = UriComponentsBuilder.newInstance()
                                                                         .scheme("http")
                                                                         .host("localhost")
                                                                         .path("/doctors/{id}");
+
+    public DoctorController(DoctorService doctorService, DoctorDtoConverter dtoConverter) {
+        this.doctorService = doctorService;
+        this.dtoConverter = dtoConverter;
+    }
 
     //localhost/doctors
     //localhost/doctors?specialization=surgeon
