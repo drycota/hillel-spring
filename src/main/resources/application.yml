@@ -5,3 +5,10 @@ pet-clinic:
   working-hours:
     start: 8AM
     end: 5PM
+spring:
+  h2:
+    console:
+      enabled: true
+logging:
+  level:
+    sql: debug

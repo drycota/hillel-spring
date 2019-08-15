@@ -2,7 +2,5 @@
   "name": "Donald",
   "breed": "Duck",
   "age": 1,
-  "owner": {
-    "name": "Ivan"
-  }
+  "owner": "Ivan"
 }
