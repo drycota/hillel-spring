@@ -10,4 +10,6 @@ public interface DoctorDtoConverter {
     Doctor toModel(DoctorInputDto dto);
 
     Doctor toModel(DoctorInputDto dto, Integer id);
+
+    DoctorOutputDto toDto(Doctor doc);
 }

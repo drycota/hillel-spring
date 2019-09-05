@@ -44,17 +44,17 @@ public class DoctorControllerTest {
                 .contentType("application/json")
                 .content(fromResource("doctor/create-doctor.json")))
                 .andExpect(status().isCreated())
-                .andExpect(header().string("location", containsString("http://localhost/doctors/")))
+                .andExpect(header().string("location", containsString("http://my-doctors.com/doctors/")))
                 .andReturn().getResponse();
 
-        Integer id = Integer.parseInt(response.getHeader("location").replace("http://localhost/doctors/", ""));
+        Integer id = Integer.parseInt(response.getHeader("location").replace("http://my-doctors.com/doctors/", ""));
 
         assertThat(repository.findById(id)).isPresent();
     }
 
     @Test
     public void shouldUpdateDoctor() throws Exception{
-        Integer id = repository.createDoctor(new Doctor(null, "Boris", "surgeon")).getId();
+        Integer id = repository.save(new Doctor(null, "Boris", "surgeon")).getId();
         mockMvc.perform(put("/doctors/{id}", id)
                 .contentType("application/json")
                 .content(fromResource("doctor/update-doctor.json")))
@@ -65,9 +65,9 @@ public class DoctorControllerTest {
 
     @Test
     public void shouldReturnAll() throws Exception{
-        repository.createDoctor(new Doctor(null, "Boris", "surgeon"));
-        repository.createDoctor(new Doctor(null, "Anton", "therapist"));
-        repository.createDoctor(new Doctor(null, "Albert", "surgeon"));
+        repository.save(new Doctor(null, "Boris", "surgeon"));
+        repository.save(new Doctor(null, "Anton", "therapist"));
+        repository.save(new Doctor(null, "Albert", "surgeon"));
 
         mockMvc.perform(MockMvcRequestBuilders.get("/doctors"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -81,9 +81,9 @@ public class DoctorControllerTest {
 
     @Test
     public void shouldReturnNameStartA() throws Exception{
-        repository.createDoctor(new Doctor(null, "Boris", "surgeon"));
-        repository.createDoctor(new Doctor(null, "Anton", "therapist"));
-        repository.createDoctor(new Doctor(null, "Albert", "surgeon"));
+        repository.save(new Doctor(null, "Boris", "surgeon"));
+        repository.save(new Doctor(null, "Anton", "therapist"));
+        repository.save(new Doctor(null, "Albert", "surgeon"));
 
         mockMvc.perform(get("/doctors")
                 .param("name", "A"))
@@ -95,9 +95,9 @@ public class DoctorControllerTest {
 
     @Test
     public void shouldReturnSurgeon() throws Exception{
-        repository.createDoctor(new Doctor(null, "Boris", "surgeon"));
-        repository.createDoctor(new Doctor(null, "Anton", "therapist"));
-        repository.createDoctor(new Doctor(null, "Albert", "surgeon"));
+        repository.save(new Doctor(null, "Boris", "surgeon"));
+        repository.save(new Doctor(null, "Anton", "therapist"));
+        repository.save(new Doctor(null, "Albert", "surgeon"));
 
         mockMvc.perform(get("/doctors")
                 .param("specialization", "surgeon"))
@@ -109,9 +109,9 @@ public class DoctorControllerTest {
 
     @Test
     public void shouldReturnAlbert() throws Exception{
-        repository.createDoctor(new Doctor(null, "Boris", "surgeon"));
-        repository.createDoctor(new Doctor(null, "Anton", "therapist"));
-        repository.createDoctor(new Doctor(null, "Albert", "surgeon"));
+        repository.save(new Doctor(null, "Boris", "surgeon"));
+        repository.save(new Doctor(null, "Anton", "therapist"));
+        repository.save(new Doctor(null, "Albert", "surgeon"));
 
         mockMvc.perform(get("/doctors")
                 .param("name", "A")
@@ -123,15 +123,54 @@ public class DoctorControllerTest {
     }
 
     @Test
-    public void shouldDeleteDoctor() throws Exception{
-        repository.createDoctor(new Doctor(null, "Boris", "surgeon"));
-        repository.createDoctor(new Doctor(null, "Anton", "therapist"));
-        repository.createDoctor(new Doctor(null, "Albert", "surgeon"));
+    public void shouldReturnAlbertIgnoreCase() throws Exception{
+        repository.save(new Doctor(null, "Boris", "surgeon"));
+        repository.save(new Doctor(null, "Anton", "therapist"));
+        repository.save(new Doctor(null, "Albert", "surgeon"));
 
-        mockMvc.perform(delete("/doctors/{id}", 2))
+        mockMvc.perform(get("/doctors")
+                .param("name", "aLBeRt")
+                .param("specialization", "suRgeOn"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].name").value("Albert"))
+                .andExpect(jsonPath("$[0].specialization").value("surgeon"));
+    }
+
+    @Test
+    public void shouldDeleteDoctor() throws Exception{
+        repository.save(new Doctor(null, "Boris", "surgeon"));
+        Integer id = repository.save(new Doctor(null, "Anton", "therapist")).getId();
+        repository.save(new Doctor(null, "Albert", "surgeon"));
+
+        mockMvc.perform(delete("/doctors/{id}", id))
                 .andExpect(status().isNoContent());
 
-        assertThat(repository.findById(2)).isEmpty();
+        assertThat(repository.findById(id).isEmpty());
+    }
+
+    @Test
+    public void doctorWithAWrongSpecialization() throws Exception {
+        mockMvc.perform(post("/doctors")
+                .contentType("application/json")
+                .content(fromResource("doctor/wrong-doctor.json")))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void shouldReturnSurgeonAndTherapist() throws Exception{
+        repository.save(new Doctor(null, "Boris", "surgeon"));
+        repository.save(new Doctor(null, "Anton", "therapist"));
+        repository.save(new Doctor(null, "Albert", "surgeon"));
+        repository.save(new Doctor(null, "Igor", "oculist"));
+
+        mockMvc.perform(get("/doctors")
+                .param("specializations", "surgeon", "therapist"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(3)))
+                .andExpect(jsonPath("$[0].name").value("Boris"))
+                .andExpect(jsonPath("$[1].name").value("Anton"))
+                .andExpect(jsonPath("$[2].name").value("Albert"));
     }
 
     public String fromResource(String path) {

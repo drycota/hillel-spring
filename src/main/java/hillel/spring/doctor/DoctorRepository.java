@@ -1,42 +1,20 @@
 package hillel.spring.doctor;
 
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @Repository
-public class DoctorRepository {
-    private final Map<Integer, Doctor> idToDoctor = new ConcurrentHashMap<>();
-    private final AtomicInteger counter = new AtomicInteger();
+public interface DoctorRepository extends JpaRepository<Doctor, Integer> {
+    //@Query("select doctor from Doctor as doctor where doctor.specialization=:specialization and doctor.name like %:name%")
+    List<Doctor> findBySpecializationIgnoreCaseAndNameStartsWithIgnoreCase(@Param("specialization")String specialization, @Param("name")String name);
 
-    public List<Doctor> findAll(){
-        return new ArrayList<>(idToDoctor.values());
-    }
+    List<Doctor> findBySpecialization(String specialization);
 
-    public Optional<Doctor> findById(Integer id) {
-        return Optional.ofNullable(idToDoctor.get(id));
-    }
+    List<Doctor> findBySpecializationIn(@Param("specializations") List<String> specializations);
 
-    public Doctor createDoctor(Doctor doctor) {
-        Doctor created = doctor.toBuilder().id(counter.incrementAndGet()).build();
-        idToDoctor.put(created.getId(), created);
-        return created;
-    }
+    List<Doctor> findByNameStartsWithIgnoreCase(@Param("name") String name);
 
-    public void updateDoctor(Doctor doctor) {
-        idToDoctor.replace(doctor.getId(), doctor);
-    }
-
-    public void deleteDoctor(Integer id) {
-        idToDoctor.remove(id);
-    }
-
-    public void deleteAll() {
-        idToDoctor.clear();
-    }
 }

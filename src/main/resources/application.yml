@@ -12,3 +12,10 @@ spring:
 logging:
   level:
     sql: debug
+
+doctors:
+  host-name: my-doctors.com
+  specializations:
+    - surgeon
+    - therapist
+    - oculist
