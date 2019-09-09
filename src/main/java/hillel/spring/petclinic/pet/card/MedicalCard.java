@@ -10,7 +10,7 @@ import java.util.List;
 @Entity
 public class MedicalCard {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private Integer petId;
     private LocalDateTime createdDate;

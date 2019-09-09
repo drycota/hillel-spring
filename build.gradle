@@ -32,8 +32,8 @@ dependencies {
 //	implementation 'org.springframework.retry:spring-retry'
 //	compile group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.2'
 
-	runtimeOnly 'com.h2database:h2'
-//	runtimeOnly 'org.postgresql:postgresql'
+//	runtimeOnly 'com.h2database:h2'
+	runtimeOnly 'org.postgresql:postgresql'
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 //	testCompile "org.testcontainers:postgresql:1.11.3"

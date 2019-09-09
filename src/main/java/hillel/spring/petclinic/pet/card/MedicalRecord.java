@@ -10,7 +10,7 @@ import java.util.List;
 @Entity
 public class MedicalRecord {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private LocalDateTime date;
     @ElementCollection(fetch = FetchType.EAGER)
