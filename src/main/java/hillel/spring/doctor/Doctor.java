@@ -1,24 +1,29 @@
 package hillel.spring.doctor;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-@Builder(toBuilder = true)
 @Entity
 public class Doctor {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String name;
-    private String specialization;
+    @ElementCollection(fetch = FetchType.EAGER)
+    private List<String> specialization;
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private Map<LocalDate, Schedule> scheduleToDate;
+
+    public Doctor(Integer id, String name, List<String> specialization) {
+        this.id = id;
+        this.name = name;
+        this.specialization = specialization;
+    }
 }

@@ -5,11 +5,13 @@ import hillel.spring.doctor.dto.DoctorInputDto;
 import hillel.spring.doctor.dto.DoctorOutputDto;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -50,17 +52,17 @@ public class DoctorController {
                 .map(dtoConverter::toDto)
                 .collect(Collectors.toList());
     }
-//    private Predicate<Doctor> filterBySpecialization(String specialization) {
-//        return doctor -> doctor.getSpecialization().equals(specialization);
-//    }
-//    private Predicate<Doctor> filterByName(String name) {
-//        return doctor -> doctor.getName().startsWith(name);
-//    }
 
     @GetMapping("/doctors/{id}")
     public DoctorOutputDto findById(@PathVariable Integer id) {
         val mayBeDoctor = doctorService.findById(id);
         return dtoConverter.toDto(mayBeDoctor.orElseThrow(DoctorNotFoundException::new));
+    }
+
+    @GetMapping("/doctors/{doctorId}/schedule/{date}")
+    public Schedule findScheduleByDate(@PathVariable Integer doctorId,
+                                       @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date){
+        return doctorService.findOrCreateScheduleByDate(doctorId, date);
     }
 
     @PostMapping("/doctors")
@@ -72,6 +74,15 @@ public class DoctorController {
         }
         else
             throw  new WrongSpecializationsException();
+    }
+
+    @PostMapping("/doctors/{doctorId}/schedule/{date}/{hour}")
+    public ResponseEntity<?> schedulePetToDoctor(@PathVariable Integer doctorId,
+                                                 @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+                                                 @PathVariable Integer hour,
+                                                 @RequestBody PetId petId){
+        doctorService.schedulePetToDoctor(doctorId, date, hour, petId.getPetId());
+        return ResponseEntity.ok().build();
     }
 
     @PutMapping("/doctors/{id}")
@@ -100,8 +111,8 @@ public class DoctorController {
     }
 
     private boolean checkSpecialization(Doctor doctor) {
-        return specializations.getSpecializations().stream()
-                .anyMatch(spec -> spec.equals(doctor.getSpecialization()));
+        return doctor.getSpecialization().stream()
+                .allMatch(doc -> specializations.getSpecializations().stream().anyMatch(doc::equals));
     }
 
 }

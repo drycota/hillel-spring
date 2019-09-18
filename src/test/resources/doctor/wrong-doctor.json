@@ -1,4 +1,4 @@
 {
   "name": "Boris",
-  "specialization": "realtor"
+  "specialization": ["realtor"]
 }
