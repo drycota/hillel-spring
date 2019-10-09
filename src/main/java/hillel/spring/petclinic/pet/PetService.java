@@ -1,12 +1,12 @@
 package hillel.spring.petclinic.pet;
 
 import lombok.AllArgsConstructor;
+import lombok.val;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -48,5 +48,23 @@ public class PetService {
     public void deletePet(Integer id) {
 //        petRepository.deletePet(id);
         petRepository.deleteById(id);
+    }
+
+    // Нельзя вызывать метод с анотацией @Transactional внутри класса, т.к. прокси не откроет транзакцию
+    public void swap2(){
+        swapOwners(1,2);
+    }
+
+    @Transactional
+    public void swapOwners(Integer firstId, Integer secondId) {
+        val firstPet = petRepository.findById(firstId).get();
+        val secondPet = petRepository.findById(secondId).get();
+
+        val firstOwner = firstPet.getOwner();
+        firstPet.setOwner(secondPet.getOwner());
+        secondPet.setOwner(firstOwner);
+
+        petRepository.save(firstPet);
+        petRepository.save(secondPet);
     }
 }

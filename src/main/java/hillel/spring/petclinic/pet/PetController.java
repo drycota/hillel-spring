@@ -12,7 +12,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
-import java.util.stream.Stream;
 
 
 @RestController
@@ -88,6 +87,11 @@ public class PetController {
         val pet = dtoConverter.toModel(dto, id);
         petService.updatePet(pet);
         return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/pets/swap-owners/{firstId}/{secondId}")
+    public void swapOwners(@PathVariable Integer firstId, @PathVariable Integer secondId) {
+        petService.swapOwners(firstId, secondId);
     }
 
     @DeleteMapping("/pets/{id}")
