@@ -10,10 +10,13 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 public interface PetDtoConverter {
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "version", ignore = true)
     Pet toModel(PetInputDto dto);
 
+    @Mapping(target = "version", ignore = true)
     Pet toModel(PetInputDto dto, Integer id);
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "version", ignore = true)
     void update(@MappingTarget Pet pet, PetInputDto dto);
 }

@@ -5,10 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Entity;
+import javax.persistence.*;
 
 @Data
 @AllArgsConstructor
@@ -20,6 +17,8 @@ public class Pet {
     //@GeneratedValue // h2
     @GeneratedValue(strategy = GenerationType.IDENTITY)  // postgres
     private  Integer id;
+    @Version
+    private Integer version;
     private  String name;
     private  String breed;
     private  Integer age;

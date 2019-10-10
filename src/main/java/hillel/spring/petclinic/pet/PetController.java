@@ -3,9 +3,11 @@ package hillel.spring.petclinic.pet;
 import hillel.spring.petclinic.pet.dto.PetDtoConverter;
 import hillel.spring.petclinic.pet.dto.PetInputDto;
 import lombok.val;
+import org.hibernate.StaleObjectStateException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -95,6 +97,7 @@ public class PetController {
     }
 
     @PatchMapping("/pets/{id}")
+    @Retryable(StaleObjectStateException.class)
     public void patchPet(@RequestBody PetInputDto dto,
                          @PathVariable Integer id) {
         val pet = petService.findById(id).get();

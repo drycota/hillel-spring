@@ -42,6 +42,9 @@ public class PetService {
 
     public void save(Pet pet) {
 //        petRepository.updatePet(pet);
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) { }
         petRepository.save(pet);
     }
 
