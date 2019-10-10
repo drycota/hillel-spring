@@ -85,13 +85,24 @@ public class PetController {
     public ResponseEntity<?> updatePet(@RequestBody PetInputDto dto,
                                        @PathVariable Integer id) {
         val pet = dtoConverter.toModel(dto, id);
-        petService.updatePet(pet);
+        petService.save(pet);
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/pets/swap-owners/{firstId}/{secondId}")
     public void swapOwners(@PathVariable Integer firstId, @PathVariable Integer secondId) {
         petService.swapOwners(firstId, secondId);
+    }
+
+    @PatchMapping("/pets/{id}")
+    public void patchPet(@RequestBody PetInputDto dto,
+                         @PathVariable Integer id) {
+        val pet = petService.findById(id).get();
+
+        dtoConverter.update(pet, dto);
+
+        petService.save(pet);
+
     }
 
     @DeleteMapping("/pets/{id}")

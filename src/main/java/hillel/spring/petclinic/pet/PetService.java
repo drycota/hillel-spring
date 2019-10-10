@@ -40,7 +40,7 @@ public class PetService {
         return petRepository.save(pet);
     }
 
-    public void updatePet(Pet pet) {
+    public void save(Pet pet) {
 //        petRepository.updatePet(pet);
         petRepository.save(pet);
     }
