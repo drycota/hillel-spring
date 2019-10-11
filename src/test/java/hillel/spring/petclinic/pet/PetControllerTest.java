@@ -56,7 +56,7 @@ public class PetControllerTest {
 //        Integer id = repository.createPet(new Pet(null, "Tom", "Cat", 2, new Owner("Vasya"))).getId();
         Integer id = repository.save(new Pet(null, "Tom", "Cat", 2, "Vasya")).getId();
 
-        mockMvc.perform(put("/pets/{id}", id)
+        mockMvc.perform(patch("/pets/{id}", id)
                 .contentType("application/json")
                 .content(fromResource("petclinic/pet/update-pet.json")))
                 .andExpect(status().isOk());
@@ -67,9 +67,9 @@ public class PetControllerTest {
     @Test
     public void shouldDeleteJerry() throws Exception {
 //        repository.createPet(new Pet(null, "Tom", "Cat", 2, new Owner("Vasya")));
-        repository.save(new Pet(null, "Tom", "Cat", 2, "Vasya"));
+        repository.save(new Pet(null, 1,"Tom", "Cat", 2, "Vasya"));
 //        repository.createPet(new Pet(null, "Jerry", "Mouse", 1, new Owner("Petya")));
-        Integer id = repository.save(new Pet(null, "Jerry", "Mouse", 1,"Petya")).getId();
+        Integer id = repository.save(new Pet(null, 1, "Jerry", "Mouse", 1,"Petya")).getId();
 
         mockMvc.perform(delete("/pets/{id}", id))
                 .andExpect(status().isNoContent());
@@ -80,9 +80,9 @@ public class PetControllerTest {
     @Test
     public void showIdFindAllPets() throws Exception{
 //        repository.createPet(new Pet(null, "Tom", "Cat", 2, new Owner("Vasya")));
-        repository.save(new Pet(null, "Tom", "Cat", 2,"Vasya"));
+        repository.save(new Pet(null,1, "Tom", "Cat", 2,"Vasya"));
 //        repository.createPet(new Pet(null, "Jerry", "Mouse", 1, new Owner("Petya")));
-        repository.save(new Pet(null, "Jerry", "Mouse", 1,"Petya"));
+        repository.save(new Pet(null,1, "Jerry", "Mouse", 1,"Petya"));
 
         mockMvc.perform(MockMvcRequestBuilders.get("/pets"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -97,9 +97,9 @@ public class PetControllerTest {
     @Test
     public void shouldReturnTom() throws Exception {
 //        repository.createPet(new Pet(null, "Tom", "Cat", 2, new Owner("Vasya")));
-        repository.save(new Pet(null, "Tom", "Cat", 2,"Vasya"));
+        repository.save(new Pet(null, 1,"Tom", "Cat", 2,"Vasya"));
 //        repository.createPet(new Pet(null, "Jerry", "Mouse", 1, new Owner("Petya")));
-        repository.save(new Pet(null, "Jerry", "Mouse", 1,"Petya"));
+        repository.save(new Pet(null,1, "Jerry", "Mouse", 1,"Petya"));
 
         mockMvc.perform(get("/pets").param("name", "Tom"))
                 .andExpect(status().isOk())
@@ -110,9 +110,9 @@ public class PetControllerTest {
     @Test
     public void shouldReturnJerry() throws Exception {
 //        repository.createPet(new Pet(null, "Tom", "Cat", 2, new Owner("Vasya")));
-        repository.save(new Pet(null, "Tom", "Cat", 2,"Vasya"));
+        repository.save(new Pet(null,1, "Tom", "Cat", 2,"Vasya"));
 //        repository.createPet(new Pet(null, "Jerry", "Mouse", 1, new Owner("Petya")));
-        repository.save(new Pet(null, "Jerry", "Mouse", 1,"Petya"));
+        repository.save(new Pet(null,1, "Jerry", "Mouse", 1,"Petya"));
 
         mockMvc.perform(get("/pets")
                 .param("name", "Jerry")

@@ -23,4 +23,12 @@ public class Pet {
     private  String breed;
     private  Integer age;
     private  String owner;
+
+    public Pet(Integer id, String name, String breed, Integer age, String owner) {
+        this.id = id;
+        this.name = name;
+        this.breed = breed;
+        this.age = age;
+        this.owner = owner;
+    }
 }
